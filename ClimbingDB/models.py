@@ -35,19 +35,18 @@ class Climber(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     last_name: Mapped[str]
     first_name: Mapped[str]
-
     # many-to-many relationship to Routes, bypassing the ClimberRoutes class
     routes_climbed: Mapped[List["Route"]] = relationship(
         secondary="climber_route",
         back_populates="climbed_by",
-        # overlaps="climber, route",
+        overlaps="climber, route",
         # viewonly=True,
     )
 
     # association between Climber -> ClimberRoutes -> Routes
     route_associations: Mapped[List["ClimberRoute"]] = relationship(
         back_populates="climber",
-        # overlaps="routes_climbed"
+        overlaps="routes_climbed"
     )
 
 
@@ -56,17 +55,18 @@ class Route(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str]
-
+    grade: Mapped[str]
+    description: Mapped[str]
     # many-to-many relationship to Parent, bypassing the `Association` class
     climbed_by: Mapped[List["Climber"]] = relationship(
         secondary="climber_route",
         back_populates="routes_climbed",
-        # overlaps="climber, route",
+        overlaps="climber, route",
         # viewonly=True,
     )
 
     # association between Route -> ClimberRoute -> Climber
     climber_associations: Mapped[List["ClimberRoute"]] = relationship(
         back_populates="route",
-        # overlaps="route_associations"
+        overlaps="route_associations"
     )
