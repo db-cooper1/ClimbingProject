@@ -40,7 +40,7 @@ class Climber(Base):
         secondary="climber_route",
         back_populates="climbed_by",
         overlaps="climber, route",
-        # viewonly=True,
+        viewonly=True,
     )
 
     # association between Climber -> ClimberRoutes -> Routes
@@ -62,7 +62,7 @@ class Route(Base):
         secondary="climber_route",
         back_populates="routes_climbed",
         overlaps="climber, route",
-        # viewonly=True,
+        viewonly=True,
     )
 
     # association between Route -> ClimberRoute -> Climber

@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from models import Base, Climber, Route, ClimberRoute
-from datetime import datetime
+import datetime
 from faker import Faker
 fake = Faker()
 import random
@@ -30,9 +30,12 @@ def add_route(sess):
 def link_climber_route(sess, climber_id, route_id, date_climbed=None):
     climber_id = int(input("Climber ID: ").strip())
     route_id = int(input("Route ID: ").strip())
-    date_climbed = input("Date climbed: ").strip()
+    d = input("Day of climbing: ").strip()
+    m = input("Month of climbing: ").strip()
+    y = input("Year of climbing: ").strip()
+    date_climbed = datetime.datetime(int(y), int(m), int(d))
     if date_climbed is None:
-        dt = datetime.now()
+        dt = datetime.datetime.now()
         date_climbed = dt.date()
     cr = ClimberRoute(climber_id=climber_id, route_id=route_id, date_climbed=date_climbed)
     sess.add(cr)
