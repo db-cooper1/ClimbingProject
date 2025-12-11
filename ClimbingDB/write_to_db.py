@@ -1,3 +1,5 @@
+from sqlite3 import IntegrityError
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from models import Base, Climber, Route, ClimberRoute
@@ -28,18 +30,23 @@ def add_route(sess):
     print(f"Added route {r.id}: {r.name}")
 
 def link_climber_route(sess, climber_id, route_id, date_climbed=None):
+    d,m,y = "", "", ""
     climber_id = int(input("Climber ID: ").strip())
     route_id = int(input("Route ID: ").strip())
-    d = input("Day of climbing: ").strip()
-    m = input("Month of climbing: ").strip()
-    y = input("Year of climbing: ").strip()
-    date_climbed = datetime.datetime(int(y), int(m), int(d))
-    if date_climbed is None:
-        dt = datetime.datetime.now()
-        date_climbed = dt.date()
+    d = input("Day of climbing (Enter -1 for Today): ").strip()
+    if d!="-1":
+        m = input("Month of climbing: ").strip()
+        y = input("Year of climbing: ").strip()
+    if d!="" and m!="" and y!="":
+        date_climbed = datetime.datetime(int(y), int(m), int(d))
+    else:
+        date_climbed = datetime.datetime.now().date()
     cr = ClimberRoute(climber_id=climber_id, route_id=route_id, date_climbed=date_climbed)
-    sess.add(cr)
-    sess.commit()
+    try:
+        sess.add(cr)
+        sess.commit()
+    except IntegrityError:
+        print("Already Climbed Route")
     print(f"Linked climber {climber_id} to route {route_id}")
 
 
@@ -68,7 +75,9 @@ while True:
     print("3 = Add Climb")
     print("4 = Quit")
     choice = input("Choose: ").strip()
-
+    while choice not in ["1", "2", "3", "4"]:
+        print("Invalid choice")
+        choice = input("Choose: ").strip()
     if choice == "1":
         add_climber(session)
     elif choice == "2":
