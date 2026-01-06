@@ -65,13 +65,17 @@ class BelayBuddy:
 
     def show_start_screen(self):
         self.clear()
-        logo_img = Image.open("logo.png")
-        logo_img = logo_img.resize((400, 200), Image.LANCZOS)
-        self.logo = ImageTk.PhotoImage(logo_img)
-        tk.Label(self.root, image=self.logo).pack(pady=20)
 
-        tk.Button(self.root, text="Login", width=20, command=self.show_login).pack(pady=10)
-        tk.Button(self.root, text="Create New Account", width=20, command=self.show_create_account).pack()
+        logo_img = Image.open(r"C:\Users\milgal1112\PycharmProjects\ClimbingProject\GUI\Assets\Logo.png")
+        logo_img = logo_img.resize((400, 200))
+
+        self.logo = ImageTk.PhotoImage(logo_img)
+        self.logo_label = tk.Label(self.root, image=self.logo)
+        self.logo_label.pack(pady=20)
+
+        tk.Button(self.root, text="Login", width=20, command=self.show_login).pack(pady=1)
+        tk.Button(self.root, text="Create New Account", width=20, command=self.show_create_account).pack(pady=1)
+        tk.Button(self.root, text="Exit App", width=20, command=self.exit).pack(pady=1)
 
     # ---------- CREATE ACCOUNT ---------- #
 
@@ -124,6 +128,9 @@ class BelayBuddy:
         save_users(self.users)
         messagebox.showinfo("Success", "Account created")
         self.show_start_screen()
+
+    def exit(self):
+        self.root.destroy()
 
     # ---------- LOGIN ---------- #
 
@@ -301,5 +308,6 @@ class BelayBuddy:
 if __name__ == "__main__":
     root = tk.Tk()
     root.geometry("400x400")
+    root.configure(background='white')
     app = BelayBuddy(root)
     root.mainloop()
