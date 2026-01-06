@@ -1,2 +1,6 @@
-sqlalchemy
-matplotlib
+sqlalchemy~=2.0.45
+matplotlib~=3.10.8
+seaborn~=0.13.2
+numpy~=2.4.0
+mplcursors~=0.7
+pillow~=12.1.0
