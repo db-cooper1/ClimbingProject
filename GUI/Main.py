@@ -17,14 +17,7 @@ from PIL import Image, ImageTk
 
 USER_FILE = "users.json"
 
-GRADE_CONVERSION = {
-    "V0": 0, "V1": 1, "V2": 2, "V3": 3, "V4": 4,
-    "V5": 5, "V6": 6, "V7": 7, "V8": 8, "V9": 9,
-    "V10": 10, "V11": 11, "V12": 12,
-    # Example non-V grades
-    "6A": 3, "6B": 4, "6C": 5,
-    "7A": 6, "7B": 7, "7C": 8
-}
+GRADE_CONVERSION = {"VB": 0} | {f"V{i}": i for i in range(18)}
 
 STYLES = ["Powerful", "Slopey", "Crimpy", "Technical", "Dynamic"]
 
@@ -66,7 +59,7 @@ class BelayBuddy:
     def show_start_screen(self):
         self.clear()
 
-        logo_img = Image.open(r"C:\Users\milgal1112\PycharmProjects\ClimbingProject\GUI\Assets\Logo.png")
+        logo_img = Image.open(r"Assets\Logo.png")
         logo_img = logo_img.resize((400, 200))
 
         self.logo = ImageTk.PhotoImage(logo_img)
@@ -75,6 +68,7 @@ class BelayBuddy:
 
         tk.Button(self.root, text="Login", width=20, command=self.show_login).pack(pady=1)
         tk.Button(self.root, text="Create New Account", width=20, command=self.show_create_account).pack(pady=1)
+        tk.Button(self.root, text="User Guide", width=20, command=self.guide).pack(pady=1)
         tk.Button(self.root, text="Exit App", width=20, command=self.exit).pack(pady=1)
 
     # ---------- CREATE ACCOUNT ---------- #
@@ -128,6 +122,10 @@ class BelayBuddy:
         save_users(self.users)
         messagebox.showinfo("Success", "Account created")
         self.show_start_screen()
+
+    def guide(self):
+        self.clear()
+        tk.Button(self.root, text="Back", command=self.show_start_screen).pack()
 
     def exit(self):
         self.root.destroy()
@@ -215,7 +213,7 @@ class BelayBuddy:
             xs = np.linspace(min(x), max(x), 200)
             ax.plot(xs, poly(xs))
 
-        ax.set_xlabel("Days")
+        ax.set_xlabel("Date")
         ax.set_ylabel("V Grade")
         ax.set_title("Climbing Progress")
         ax.spines["top"].set_visible(False)
@@ -236,7 +234,8 @@ class BelayBuddy:
                 f"Grade: V{climb['v_grade']}\n"
                 f"Date: {climb['date']}\n"
                 f"Style: {climb.get('style', '')}\n"
-                f"Gym: {climb.get('gym', '')}"
+                f"Gym: {climb.get('gym', '')}\n"
+                "[Right-CLick To Close]"
             )
             sel.annotation.get_bbox_patch().set(alpha=0.85)
 
@@ -283,11 +282,20 @@ class BelayBuddy:
 
             climb_date = date_entry.get() or date.today().isoformat()
 
+            gym = gym_entry.get()
+            if gym == "":
+                gym = "N/A"
+
+            style = style_box.get()
+            if style == "":
+                style = "N/A"
+
+
             self.users[self.current_user]["climbs"].append({
                 "route": route_name.get() or "Custom",
                 "v_grade": v_grade,
-                "style": style_box.get(),
-                "gym": gym_entry.get(),
+                "style": style,
+                "gym": gym,
                 "date": climb_date
             })
 
