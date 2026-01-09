@@ -188,7 +188,7 @@ class BelayBuddy:
 
         dates = [datetime.strptime(c["date"], "%Y-%m-%d") for c in climbs]
         base_date = min(dates)
-        x = np.array([(d - base_date).days for d in dates], dtype=float)
+        x = np.array([(d - base_date).days for d in dates], dtype=float) #https://stackoverflow.com/questions/9627686/plotting-dates-on-the-x-axis
 
         for i in range(len(x)):
             x[i] += 0.05 * (x[:i] == x[i]).sum()
