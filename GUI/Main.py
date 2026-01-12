@@ -4,13 +4,8 @@ import json
 import os
 import hashlib
 from datetime import date, datetime
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
-import mplcursors
-import numpy as np
 from PIL import Image, ImageTk
 import matplotlib.dates as mdates
-from datetime import datetime
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
@@ -330,3 +325,7 @@ if __name__ == "__main__":
     root.configure(background='white')
     app = BelayBuddy(root)
     root.mainloop()
+
+#add recommended routes
+#add recommended styles
+#congratulate the climber if they do well over time`
