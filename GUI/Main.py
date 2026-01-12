@@ -7,10 +7,14 @@ from datetime import date, datetime
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import mplcursors
-import matplotlib.pyplot as plt
-import seaborn as sns
 import numpy as np
 from PIL import Image, ImageTk
+import matplotlib.dates as mdates
+from datetime import datetime
+import numpy as np
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import mplcursors
 
 
 # ---------------- CONFIG ---------------- #
@@ -186,12 +190,13 @@ class BelayBuddy:
         if len(climbs) == 0:
             return
 
+        # Convert dates
         dates = [datetime.strptime(c["date"], "%Y-%m-%d") for c in climbs]
-        base_date = min(dates)
-        x = np.array([(d - base_date).days for d in dates], dtype=float) #https://stackoverflow.com/questions/9627686/plotting-dates-on-the-x-axis
+        x = mdates.date2num(dates)  # matplotlib date numbers
 
+        # Add small jitter for multiple climbs on same day
         for i in range(len(x)):
-            x[i] += 0.05 * (x[:i] == x[i]).sum()
+            x[i] += 0.02 * (x[:i] == x[i]).sum()  # 0.05 ≈ 1.2 hours
 
         y = np.array([c["v_grade"] for c in climbs], dtype=float)
 
@@ -200,6 +205,7 @@ class BelayBuddy:
 
         scatter = ax.scatter(x, y)
 
+        # Polynomial trendline
         if len(y) >= 3:
             degree = 2
         elif len(y) == 2:
@@ -208,10 +214,15 @@ class BelayBuddy:
             degree = None
 
         if degree is not None:
-            coeffs = np.polyfit(x, y, degree)
-            poly = np.poly1d(coeffs)
+            coefficients = np.polyfit(x, y, degree)
+            poly = np.poly1d(coefficients)
             xs = np.linspace(min(x), max(x), 200)
             ax.plot(xs, poly(xs))
+
+        # ---- DATE AXIS FORMATTING ----
+        ax.xaxis.set_major_locator(mdates.AutoDateLocator())
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%Y-%m-%d"))
+        fig.autofmt_xdate()
 
         ax.set_xlabel("Date")
         ax.set_ylabel("V Grade")
@@ -235,7 +246,7 @@ class BelayBuddy:
                 f"Date: {climb['date']}\n"
                 f"Style: {climb.get('style', '')}\n"
                 f"Gym: {climb.get('gym', '')}\n"
-                "[Right-CLick To Close]"
+                "[Right-Click To Close]"
             )
             sel.annotation.get_bbox_patch().set(alpha=0.85)
 
